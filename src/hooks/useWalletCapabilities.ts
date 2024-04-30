@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 import { WalletCapabilities } from 'viem'
-import { useWalletClient } from 'wagmi'
-import { walletActionsEip5792 } from 'viem/experimental'
 import { useEIP5792WalletClient } from './useEIP5792WalletClient'
 
 function useWalletCapabilities({chainId} : {chainId?: number}) {
@@ -16,7 +14,8 @@ function useWalletCapabilities({chainId} : {chainId?: number}) {
         setCapabilities(capabilities)
         setLoading(false)
       })
-      .catch((e) => {
+      .catch(() => {
+        // handle wallets that don't support this RPC
         setLoading(false)
         setCapabilities({})
       })
