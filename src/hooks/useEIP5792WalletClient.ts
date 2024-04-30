@@ -13,12 +13,12 @@ selectData = GetWalletClientData<config, chainId> & WalletActionsEip5792,
 >(
 parameters: UseWalletClientParameters<config, chainId, selectData> = {},
 ): UseWalletClientReturnType<config, chainId, selectData> {
-  const {data: originalWalletClient, ...rest } = useWalletClient()
+  const {data: originalWalletClient, ...rest } = useWalletClient(parameters)
   const [walletClient, setWalletClient] = useState<EIP5792WalletClient | undefined>(undefined);
   
   useEffect(() => {
     if (originalWalletClient) {
-      const client = originalWalletClient.extend(walletActionsEip5792());
+      const client = (originalWalletClient as any).extend(walletActionsEip5792());
       setWalletClient(client)
     }
   }, [originalWalletClient])
