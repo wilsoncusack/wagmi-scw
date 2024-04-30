@@ -17,14 +17,14 @@ const abi = [
 		name: "safeMint",
 		outputs: [],
 	},
-];
+] as const;
 
 function App() {
   const account = useAccount()
   const { connectors, connect, status, error } = useConnect()
   const { disconnect } = useDisconnect()
   const { capabilities } = useWalletCapabilities({ chainId: account.chainId })
-  const { data: walletClient } = useEIP5792WalletClient()
+  const { id, writeContracts } = useWriteContracts()
 
   return (
     <>
@@ -62,11 +62,11 @@ function App() {
         <div>{status}</div>
         <div>{error?.message}</div>
       </div>
-      { walletClient && account.address && 
+      { account && 
       <div> 
         <h2>Transact</h2>
         <div>
-          <button onClick={() => walletClient?.writeContracts({
+          <button onClick={() => writeContracts({
             contracts: [{
               address: "0x119Ea671030FBf79AB93b436D2E20af6ea469a19",
               abi,
@@ -78,10 +78,8 @@ function App() {
               functionName: "safeMint",
               args: [account.address],
             }],
-            // TODO: better types on useEIP5792WalletClient so these are derived 
-            account: walletClient.account,
-            chain: walletClient.chain
           })}>Mint</button>
+          {id && <div> ID: {id}</div>}
         </div>
       </div>
       }
