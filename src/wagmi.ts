@@ -5,7 +5,7 @@ import { coinbaseWallet } from 'wagmi/connectors'
 export const config = createConfig({
   chains: [baseSepolia],
   // turn off injected provider discovery
-  // multiInjectedProviderDiscovery: false,
+  multiInjectedProviderDiscovery: false,
   connectors: [
     coinbaseWallet({ appName: 'Create Wagmi', appChainIds: [baseSepolia.id] }),
   ],

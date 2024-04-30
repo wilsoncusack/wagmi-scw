@@ -62,7 +62,7 @@ function App() {
         <div>{status}</div>
         <div>{error?.message}</div>
       </div>
-      { account && 
+      { account.address && 
       <div> 
         <h2>Transact</h2>
         <div>
