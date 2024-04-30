@@ -18,8 +18,7 @@ parameters: UseWalletClientParameters<config, chainId, selectData> = {},
   
   useEffect(() => {
     if (originalWalletClient) {
-      const client = (originalWalletClient as any).extend(walletActionsEip5792());
-      setWalletClient(client)
+      setWalletClient((originalWalletClient as any).extend(walletActionsEip5792()))
     }
   }, [originalWalletClient])
 

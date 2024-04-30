@@ -18,6 +18,7 @@ function useWalletCapabilities({chainId} : {chainId?: number}) {
       })
       .catch((e) => {
         setLoading(false)
+        setCapabilities({})
       })
     } 
   }, [walletClient])
