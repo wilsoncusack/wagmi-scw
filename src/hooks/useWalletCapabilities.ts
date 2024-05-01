@@ -3,7 +3,7 @@ import { WalletCapabilities } from 'viem'
 import { useEIP5792WalletClient } from './useEIP5792WalletClient'
 
 function useWalletCapabilities({chainId} : {chainId?: number}) {
-  const { data: walletClient } = useEIP5792WalletClient()
+  const walletClient = useEIP5792WalletClient()
   const [capabilities, setCapabilities] = useState<{ [chainId: number]: WalletCapabilities }>({})
   const [loading, setLoading] = useState(true)
 
