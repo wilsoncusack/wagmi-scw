@@ -1,12 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { WalletCapabilities } from 'viem'
 import { useAccount, useConnect, useDisconnect, useWalletClient } from 'wagmi'
-import { walletActionsEip5792 } from 'viem/experimental'
 import useWalletCapabilities from '@/hooks/useWalletCapabilities'
 import { useWriteContracts } from '@/hooks/useWriteContracts'
-import { useEIP5792WalletClient } from '@/hooks/useEIP5792WalletClient'
+import { useCallsStatus } from '@/hooks/useCallsStatus'
 
 
 const abi = [
@@ -25,6 +22,7 @@ function App() {
   const { disconnect } = useDisconnect()
   const { capabilities } = useWalletCapabilities({ chainId: account.chainId })
   const { id, writeContracts } = useWriteContracts()
+  const {data: callsStatus} = useCallsStatus({id})
 
   return (
     <>
@@ -80,6 +78,7 @@ function App() {
             }],
           })}>Mint</button>
           {id && <div> ID: {id}</div>}
+          {callsStatus && <div> Status: {callsStatus.status}</div>}
         </div>
       </div>
       }
