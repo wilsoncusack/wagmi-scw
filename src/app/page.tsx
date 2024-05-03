@@ -1,10 +1,10 @@
 'use client'
 
-import { useAccount, useConnect, useDisconnect, useWalletClient } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import useWalletCapabilities from '@/hooks/useWalletCapabilities'
-import { useWriteContracts } from '@/hooks/useWriteContracts'
+import { useWriteContracts } from 'wagmi/experimental'
 import { useCallsStatus } from '@/hooks/useCallsStatus'
-
+import { useState } from 'react'
 
 const abi = [
 	{
@@ -21,7 +21,8 @@ function App() {
   const { connectors, connect, status, error } = useConnect()
   const { disconnect } = useDisconnect()
   const { capabilities } = useWalletCapabilities({ chainId: account.chainId })
-  const { id, writeContracts } = useWriteContracts()
+  const [id, setId] = useState<string | undefined>(undefined)
+  const { writeContracts } = useWriteContracts({mutation: {onSuccess: (id) => setId(id)}})
   const {data: callsStatus} = useCallsStatus({id})
 
   return (
@@ -64,7 +65,8 @@ function App() {
       <div> 
         <h2>Transact</h2>
         <div>
-          <button onClick={() => writeContracts({
+          <button onClick={() => {
+          writeContracts({
             contracts: [{
               address: "0x119Ea671030FBf79AB93b436D2E20af6ea469a19",
               abi,
@@ -76,7 +78,9 @@ function App() {
               functionName: "safeMint",
               args: [account.address],
             }],
-          })}>Mint</button>
+          
+          })
+          }}>Mint</button>
           {id && <div> ID: {id}</div>}
           {callsStatus && <div> Status: {callsStatus.status}</div>}
         </div>
