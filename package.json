@@ -13,6 +13,7 @@
     "next": "13.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "siwe": "^2.3.2",
     "viem": "latest",
     "wagmi": "^2.8.0"
   },
@@ -30,6 +31,6 @@
     "utf-8-validate": "^6.0.3"
   },
   "resolutions": {
-    "@coinbase/wallet-sdk": "npm:@coinbase/wallet-sdk@4.0.0-beta.12"
+    "@coinbase/wallet-sdk": "npm:@coinbase/wallet-sdk@4.0.0-beta.13"
   }
 }
