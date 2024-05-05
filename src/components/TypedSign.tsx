@@ -1,9 +1,6 @@
-'use client'
-
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Address, Hex } from "viem";
-import { useAccount, usePublicClient, useSignMessage, useSignTypedData } from "wagmi";
-import { SiweMessage } from "siwe";
+import { useAccount, usePublicClient, useSignTypedData } from "wagmi";
 
 export const domain = {
   name: 'Ether Mail',

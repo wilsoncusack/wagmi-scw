@@ -1,5 +1,3 @@
-'use client'
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Hex } from "viem";
 import { useAccount, usePublicClient, useSignMessage } from "wagmi";
