@@ -5,6 +5,7 @@ import { Capabilities } from '@/components/Capabilities'
 import { Transact } from '@/components/Transact'
 import { SignMessage } from '@/components/SignMessage'
 import { TypedSign } from '@/components/TypedSign'
+import { Permit2 } from '@/components/Permit2'
 
 const abi = [
 	{
@@ -61,6 +62,7 @@ function App() {
       <Transact/>
       <SignMessage/>
       <TypedSign/>
+      <Permit2 chainId={account.chainId!}/>
       </div>
       }
     </>

@@ -10,11 +10,12 @@
   },
   "dependencies": {
     "@tanstack/react-query": "5.0.5",
+    "@uniswap/permit2-sdk": "^1.2.1",
     "next": "13.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "siwe": "^2.3.2",
-    "viem": "latest",
+    "viem": "^2.9.32",
     "wagmi": "^2.8.0"
   },
   "devDependencies": {
