@@ -1,8 +1,9 @@
 import { AllowanceTransfer, MaxAllowanceTransferAmount, PERMIT2_ADDRESS, PermitSingle } from '@uniswap/permit2-sdk'
 import ms from 'ms'
 import { useMemo, useState } from 'react'
-import { Address, Hex, decodeAbiParameters } from 'viem'
-import { useAccount, useSignTypedData } from 'wagmi'
+import { Hex } from 'viem'
+import { parseErc6492Signature } from 'viem/experimental'
+import { useAccount, useReadContract, useSignTypedData } from 'wagmi'
 import { useWriteContracts } from 'wagmi/experimental'
 
 const abi = [{
@@ -34,7 +35,23 @@ const abi = [{
   name: 'permit',
   outputs: [],
   stateMutability: 'nonpayable',
+}, {
+  type: 'function',
+  inputs: [
+    { name: '', internalType: 'address', type: 'address' },
+    { name: '', internalType: 'address', type: 'address' },
+    { name: '', internalType: 'address', type: 'address' },
+  ],
+  name: 'allowance',
+  outputs: [
+    { name: 'amount', internalType: 'uint160', type: 'uint160' },
+    { name: 'expiration', internalType: 'uint48', type: 'uint48' },
+    { name: 'nonce', internalType: 'uint48', type: 'uint48' },
+  ],
+  stateMutability: 'view',
 }] as const
+
+const allowanceTransferContract = "0x000000000022D473030F116dDEE9F6B43aC78BA3"
 
 interface Permit extends PermitSingle {
   sigDeadline: number
@@ -51,36 +68,58 @@ const PERMIT_SIG_EXPIRATION = ms(`30m`)
 export function Permit2({chainId}: {chainId: number}) {
   const dummyToken = '0x0000000000000000000000000000000000000B0b'
   const dummySpender = '0x0000000000000000000000000000000000000B0b'
-  const permit: Permit = useMemo(() => {
+  const account = useAccount();
+
+  const {data: allowance} = useReadContract({
+    abi,
+    address: allowanceTransferContract,
+    functionName: 'allowance',
+    args: [account.address!, dummyToken, dummySpender]
+  });
+
+  const permit: Permit | undefined = useMemo(() => {
+    if (!allowance) return
+
     return {
       details: {
         token: dummyToken,
         amount: BigInt(MaxAllowanceTransferAmount.toString()),
         expiration: toDeadline(PERMIT_EXPIRATION),
-        nonce: 0, // note only works once per account right now, would need to make dynamic 
+        nonce: allowance[2], // note only works once per account right now, would need to make dynamic 
       },
       spender: dummySpender,
       sigDeadline: toDeadline(PERMIT_SIG_EXPIRATION),
     }
-  }, [])
-  const { domain, types, values } = useMemo(() => {
+  }, [allowance])
+
+  const permitData = useMemo(() => {
+    if (!permit) return
     return AllowanceTransfer.getPermitData(permit, PERMIT2_ADDRESS, chainId)
   }, [permit, chainId])
+
   const [signature, setSignature] = useState<Hex | undefined>(undefined)
   const {signTypedData} = useSignTypedData({mutation: {onSuccess: (sig) => setSignature(sig)}});
+
+  /// THIS IS THE KEY PART ///
   const parsedSignature = useMemo(() => {
     if (!signature) return 
-    return parseERC6492Signature(signature).signature
+
+    return parseErc6492Signature(signature).signature
   }, [signature])
+  
   const { writeContracts } = useWriteContracts(); 
-  const account = useAccount();
 
   return(
     <div>
       <h2>Permit2 Example</h2>
-      <p>Code sample for parsing ERC-6492 signatures for onchain use. Nonce is set to 0 so will work once per address</p>
-      {!signature && <button onClick={() => {
-        signTypedData({domain: domain as Record<string, unknown>, types, message: values as any, primaryType: 'PermitSingle'})}
+      <p>Code sample for parsing ERC-6492 signatures for onchain use </p>
+      {<button onClick={() => {
+        if (!permitData) return
+
+        signTypedData({
+          domain: permitData.domain as Record<string, unknown>, 
+          types: permitData?.types, 
+          message: permitData.values as any, primaryType: 'PermitSingle'})}
       }
         >
         Sign Permit
@@ -91,7 +130,7 @@ export function Permit2({chainId}: {chainId: number}) {
             address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
           abi, 
           functionName: 'permit', 
-          args: [account.address, values, parsedSignature]
+          args: [account.address, permitData!.values, parsedSignature]
         }]})
       }}> Submit Onchain </button>}
     </div>
@@ -100,34 +139,4 @@ export function Permit2({chainId}: {chainId: number}) {
 
 function toDeadline(expiration: number): number {
   return Math.floor((Date.now() + expiration) / 1000)
-}
-
-/// delete for viem 
-
-function isERC6492Signature(signature: Hex) : boolean {
-  const ERC6492_DETECTION_SUFFIX = "6492649264926492649264926492649264926492649264926492649264926492";
-  return signature.slice(signature.length - 64, signature.length) == ERC6492_DETECTION_SUFFIX;
-}
- 
-export type ParseERC6492ReturnType = {
-  signature: Hex;
-  factory?: Address;
-  factoryCalldata?: Hex;
-};
- 
-// NOTE: Works with non-ERC-6492 siganture
-// parseERC6492Signature(eoaSignature).sigToValidate == eoaSignature  
-// parseERC6492Signature(deployedSmartAccountSignature).sigToValidate == deployedSmartAccountSignature
-function parseERC6492Signature(signature_: Hex): ParseERC6492ReturnType {
-  if (!isERC6492Signature(signature_)) return { signature: signature_ };
- 
-  const [factory, factoryCalldata, signature] = decodeAbiParameters(
-    [
-      { type: "address" },
-      { type: "bytes" },
-      { type: "bytes" },
-    ],
-    signature_,
-  );
-  return { signature, factory, factoryCalldata };
 }
