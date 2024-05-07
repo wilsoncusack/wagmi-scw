@@ -3,20 +3,20 @@ import { baseSepolia } from "wagmi/chains";
 import { coinbaseWallet } from "wagmi/connectors";
 
 export const config = createConfig({
-	chains: [baseSepolia],
-	// turn off injected provider discovery
-	// multiInjectedProviderDiscovery: false,
-	connectors: [
-		coinbaseWallet({ appName: "Create Wagmi", appChainIds: [baseSepolia.id] }),
-	],
-	ssr: true,
-	transports: {
-		[baseSepolia.id]: http(),
-	},
+  chains: [baseSepolia],
+  // turn off injected provider discovery
+  // multiInjectedProviderDiscovery: false,
+  connectors: [
+    coinbaseWallet({ appName: "Create Wagmi", appChainIds: [baseSepolia.id] }),
+  ],
+  ssr: true,
+  transports: {
+    [baseSepolia.id]: http(),
+  },
 });
 
 declare module "wagmi" {
-	interface Register {
-		config: typeof config;
-	}
+  interface Register {
+    config: typeof config;
+  }
 }
