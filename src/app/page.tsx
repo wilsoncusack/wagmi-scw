@@ -1,25 +1,26 @@
-'use client'
+"use client";
 
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { Capabilities } from '@/components/Capabilities'
-import { Transact } from '@/components/Transact'
-import { SignMessage } from '@/components/SignMessage'
-import { TypedSign } from '@/components/TypedSign'
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { Capabilities } from "@/components/Capabilities";
+import { Transact } from "@/components/Transact";
+import { SignMessage } from "@/components/SignMessage";
+import { TypedSign } from "@/components/TypedSign";
+import { Permit2 } from "@/components/Permit2";
 
 const abi = [
-	{
-		stateMutability: "nonpayable",
-		type: "function",
-		inputs: [{ name: "to", type: "address" }],
-		name: "safeMint",
-		outputs: [],
-	},
+  {
+    stateMutability: "nonpayable",
+    type: "function",
+    inputs: [{ name: "to", type: "address" }],
+    name: "safeMint",
+    outputs: [],
+  },
 ] as const;
 
 function App() {
-  const account = useAccount()
-  const { connectors, connect, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
+  const account = useAccount();
+  const { connectors, connect, status, error } = useConnect();
+  const { disconnect } = useDisconnect();
 
   return (
     <>
@@ -35,7 +36,7 @@ function App() {
           chainId: {account.chainId}
         </div>
 
-        {account.status === 'connected' && (
+        {account.status === "connected" && (
           <button type="button" onClick={() => disconnect()}>
             Disconnect
           </button>
@@ -56,15 +57,16 @@ function App() {
         <div>{status}</div>
         <div>{error?.message}</div>
       </div>
-      { account.address && 
-      <div>
-      <Transact/>
-      <SignMessage/>
-      <TypedSign/>
-      </div>
-      }
+      {account.address && (
+        <div>
+          <Transact />
+          <SignMessage />
+          <TypedSign />
+          <Permit2 chainId={account.chainId!} />
+        </div>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
