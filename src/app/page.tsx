@@ -6,6 +6,7 @@ import { Transact } from "@/components/Transact";
 import { SignMessage } from "@/components/SignMessage";
 import { TypedSign } from "@/components/TypedSign";
 import { Permit2 } from "@/components/Permit2";
+import { TransactWithPaymaster } from "@/components/TransactWithPaymaster";
 
 const abi = [
   {
@@ -21,7 +22,7 @@ function App() {
   const account = useAccount();
   const { connectors, connect, status, error } = useConnect();
   const { disconnect } = useDisconnect();
-
+  console.log(process.env);
   return (
     <>
       <div>
@@ -60,6 +61,7 @@ function App() {
       {account.address && (
         <div>
           <Transact />
+          <TransactWithPaymaster />
           <SignMessage />
           <TypedSign />
           <Permit2 chainId={account.chainId!} />
