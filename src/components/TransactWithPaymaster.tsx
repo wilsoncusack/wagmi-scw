@@ -32,7 +32,6 @@ export function TransactWithPaymaster() {
   return (
     <div>
       <h2>Transact With Paymaster</h2>
-      <p>{JSON.stringify(capabilities)}</p>
       <div>
         <button
           onClick={() => {
