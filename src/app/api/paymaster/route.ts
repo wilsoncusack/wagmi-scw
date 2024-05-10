@@ -46,25 +46,55 @@ const paymasterClient = createClient({
 export async function POST(r: Request) {
   const req = await r.json();
   const method = req.method;
-  const [userOp, _, chainId] = req.params;
+  const [userOp, entrypoint, chainId] = req.params;
   console.log(req);
   if (chainId !== baseSepolia.id) {
     Response.json({ error: "Chain ID not supported" });
   }
 
   if (method === "pm_getPaymasterStubData") {
-    const res = await paymasterClient.getPaymasterStubData({
-      userOperation: userOp,
-    });
-    console.log(res);
-    return Response.json(res);
+    // const res = await paymasterClient.getPaymasterStubData({
+    //   userOperation: userOp,
+    // });
+    // console.log(res);
+    // return Response.json(res);
+    const data = {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'pm_getPaymasterStubData',
+      params: [userOp, entrypoint, chainId],
+    }
+    const res = await fetch(paymasterService, { // URL from your paymaster service provider
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+    const q = await res.json();
+    console.log(q)
+    return Response.json(q)
   } else if (method === "pm_getPaymasterData") {
-    console.log("in pm_getPaymasterData");
-    const res = await paymasterClient.getPaymasterData({
-      userOperation: userOp,
-    });
-    console.log(res);
-    return Response.json(res);
+    // console.log("in pm_getPaymasterData");
+    // const res = await paymasterClient.getPaymasterData({
+    //   userOperation: userOp,
+    // });
+    // console.log(res);
+    // return Response.json(res);
+    const data = {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'pm_getPaymasterData',
+      params: [userOp, entrypoint, chainId],
+    }
+    const res = await fetch(paymasterService, { // URL from your paymaster service provider
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+    return Response.json(await res.json())
   }
   return Response.json({ error: "Method not found" });
 }
