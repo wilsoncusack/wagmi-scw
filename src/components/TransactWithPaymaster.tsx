@@ -3,7 +3,6 @@ import { useWriteContracts } from "wagmi/experimental";
 import { useState } from "react";
 import { CallStatus } from "./CallStatus";
 
-
 const abi = [
   {
     stateMutability: "nonpayable",
@@ -45,9 +44,9 @@ export function TransactWithPaymaster() {
               ],
               capabilities: {
                 paymasterService: {
-                    url: process.env.REACT_APP_PAYMASTER_SERVICE_URL, // this should be your /api/paymaster api (must be reachable from internet) 
-                }
-              }
+                  url: `${document.location.origin}/paymaster"`,
+                },
+              },
             });
           }}
         >
