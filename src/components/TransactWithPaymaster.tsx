@@ -24,6 +24,7 @@ export function TransactWithPaymaster() {
   return (
     <div>
       <h2>Transact With Paymaster</h2>
+      <p>${document.location.origin}/api/paymaster</p>
       <div>
         <button
           onClick={() => {
@@ -44,7 +45,7 @@ export function TransactWithPaymaster() {
               ],
               capabilities: {
                 paymasterService: {
-                  url: `${document.location.origin}/api/paymaster"`,
+                  url: `${document.location.origin}/api/paymaster`,
                 },
               },
             });
