@@ -47,24 +47,24 @@ export async function POST(r: Request) {
   const req = await r.json();
   const method = req.method;
   const [userOp, _, chainId] = req.params;
-  console.log(req)
+  console.log(req);
   if (chainId !== baseSepolia.id) {
     Response.json({ error: "Chain ID not supported" });
   }
 
   if (method === "pm_getPaymasterStubData") {
     const res = await paymasterClient.getPaymasterStubData({
-      userOperation: userOp
+      userOperation: userOp,
     });
-
+    console.log(res);
     return Response.json(res);
   } else if (method === "pm_getPaymasterData") {
-    console.log('in pm_getPaymasterData')
-    return Response.json(
-      await paymasterClient.getPaymasterData({
-        userOperation: userOp,
-      }),
-    );
+    console.log("in pm_getPaymasterData");
+    const res = await paymasterClient.getPaymasterData({
+      userOperation: userOp,
+    });
+    console.log(res);
+    return Response.json(res);
   }
   return Response.json({ error: "Method not found" });
 }
