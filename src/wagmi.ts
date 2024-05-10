@@ -7,7 +7,10 @@ export const config = createConfig({
   // turn off injected provider discovery
   multiInjectedProviderDiscovery: false,
   connectors: [
-    coinbaseWallet({ appName: "Create Wagmi", appChainIds: [baseSepolia.id] }),
+    coinbaseWallet({
+      appName: "Wagmi Smart Wallet",
+      appChainIds: [baseSepolia.id],
+    }),
   ],
   ssr: true,
   transports: {

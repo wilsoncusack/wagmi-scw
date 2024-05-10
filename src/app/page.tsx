@@ -6,6 +6,7 @@ import { Transact } from "@/components/Transact";
 import { SignMessage } from "@/components/SignMessage";
 import { TypedSign } from "@/components/TypedSign";
 import { Permit2 } from "@/components/Permit2";
+import { TransactWithPaymaster } from "@/components/TransactWithPaymaster";
 
 const abi = [
   {
@@ -60,6 +61,7 @@ function App() {
       {account.address && (
         <div>
           <Transact />
+          <TransactWithPaymaster />
           <SignMessage />
           <TypedSign />
           <Permit2 chainId={account.chainId!} />

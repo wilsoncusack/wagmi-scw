@@ -1,20 +1,37 @@
 import { useAccount } from "wagmi";
-import { useWriteContracts } from "wagmi/experimental";
-import { useState } from "react";
+import { useCapabilities, useWriteContracts } from "wagmi/experimental";
+import { useMemo, useState } from "react";
 import { CallStatus } from "./CallStatus";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 
-// example batch transaction, making two mint NFT calls
-export function Transact() {
+export function TransactWithPaymaster() {
   const account = useAccount();
   const [id, setId] = useState<string | undefined>(undefined);
   const { writeContracts } = useWriteContracts({
     mutation: { onSuccess: (id) => setId(id) },
   });
+  const { data: availableCapabilities } = useCapabilities({
+    account: account.address,
+  });
+  const capabilities = useMemo(() => {
+    if (!availableCapabilities || !account.chainId) return {};
+    const capabilitiesForChain = availableCapabilities[account.chainId];
+    if (
+      capabilitiesForChain["paymasterService"] &&
+      capabilitiesForChain["paymasterService"].supported
+    ) {
+      return {
+        paymasterService: {
+          url: `${document.location.origin}/api/paymaster`,
+        },
+      };
+    }
+    return {};
+  }, [availableCapabilities]);
 
   return (
     <div>
-      <h2>Transact</h2>
+      <h2>Transact With Paymaster</h2>
       <div>
         <button
           onClick={() => {
@@ -26,13 +43,8 @@ export function Transact() {
                   functionName: "safeMint",
                   args: [account.address],
                 },
-                {
-                  address: myNFTAddress,
-                  abi: myNFTABI,
-                  functionName: "safeMint",
-                  args: [account.address],
-                },
               ],
+              capabilities,
             });
           }}
         >
