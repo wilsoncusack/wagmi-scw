@@ -3,6 +3,7 @@ import { ENTRYPOINT_ADDRESS_V06, UserOperation } from "permissionless";
 import { paymasterActionsEip7677 } from "permissionless/experimental";
 import {
   Address,
+  BlockTag,
   Hex,
   createClient,
   createPublicClient,
@@ -104,9 +105,9 @@ async function willSponsor({
     console.log(0.3);
 
     const implementation = await client.request<{
-      Parameters: [Address, Hex];
+      Parameters: [Address, Hex, BlockTag];
       ReturnType: Hex;
-    }>({ method: "eth_getStorageAt", params: [userOp.sender, ERC1967_IMPLENENTATION_SLOT] });
+    }>({ method: "eth_getStorageAt", params: [userOp.sender, ERC1967_IMPLENENTATION_SLOT, 'latest'] });
     console.log("implementation", implementation);
     const implementationAddress = decodeAbiParameters(
       [{ type: "address" }],
