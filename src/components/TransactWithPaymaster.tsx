@@ -2,6 +2,7 @@ import { useAccount } from "wagmi";
 import { useWriteContracts } from "wagmi/experimental";
 import { useState } from "react";
 import { CallStatus } from "./CallStatus";
+import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 
 const abi = [
   {
@@ -31,14 +32,8 @@ export function TransactWithPaymaster() {
             writeContracts({
               contracts: [
                 {
-                  address: "0x119Ea671030FBf79AB93b436D2E20af6ea469a19",
-                  abi,
-                  functionName: "safeMint",
-                  args: [account.address],
-                },
-                {
-                  address: "0x119Ea671030FBf79AB93b436D2E20af6ea469a19",
-                  abi,
+                  address: myNFTAddress,
+                  abi: myNFTABI,
                   functionName: "safeMint",
                   args: [account.address],
                 },

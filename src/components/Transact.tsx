@@ -2,16 +2,7 @@ import { useAccount } from "wagmi";
 import { useWriteContracts } from "wagmi/experimental";
 import { useState } from "react";
 import { CallStatus } from "./CallStatus";
-
-const abi = [
-  {
-    stateMutability: "nonpayable",
-    type: "function",
-    inputs: [{ name: "to", type: "address" }],
-    name: "safeMint",
-    outputs: [],
-  },
-] as const;
+import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 
 // example batch transaction, making two mint NFT calls
 export function Transact() {
@@ -30,14 +21,14 @@ export function Transact() {
             writeContracts({
               contracts: [
                 {
-                  address: "0x119Ea671030FBf79AB93b436D2E20af6ea469a19",
-                  abi,
+                  address: myNFTAddress,
+                  abi: myNFTABI,
                   functionName: "safeMint",
                   args: [account.address],
                 },
                 {
-                  address: "0x119Ea671030FBf79AB93b436D2E20af6ea469a19",
-                  abi,
+                  address: myNFTAddress,
+                  abi: myNFTABI,
                   functionName: "safeMint",
                   args: [account.address],
                 },
