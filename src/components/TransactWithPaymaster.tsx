@@ -14,7 +14,7 @@ export function TransactWithPaymaster() {
     account: account.address,
   });
   const capabilities = useMemo(() => {
-    if (!availableCapabilities || !account.chainId) return {};
+    if (!availableCapabilities || !account.chainId) return;
     const capabilitiesForChain = availableCapabilities[account.chainId];
     if (
       capabilitiesForChain["paymasterService"] &&
@@ -26,7 +26,6 @@ export function TransactWithPaymaster() {
         },
       };
     }
-    return {};
   }, [availableCapabilities]);
 
   return (
