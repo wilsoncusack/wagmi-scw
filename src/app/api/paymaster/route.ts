@@ -93,40 +93,41 @@ async function willSponsor({
   entrypoint,
   userOp,
 }: { chainId: number; entrypoint: string; userOp: UserOperation<"v0.6"> }) {
-  console.log(0);
+  // check chain id
   if (chainId !== baseSepolia.id) return false;
-  console.log(0.1);
+  // check entrypoint
+  // not strictly needed given below check on implementation address, but leaving as example
   if (entrypoint.toLowerCase() !== ENTRYPOINT_ADDRESS_V06.toLowerCase())
     return false;
-  console.log(0.2);
+
   try {
+    // check the userOp.sender is a proxy with the expected bytecode
     const code = await client.getBytecode({ address: userOp.sender });
     if (code != coinbaseSmartWalletProxyBytecode) return false;
-    console.log(0.3);
 
+    // check that userOp.sender proxies to expected implementation
     const implementation = await client.request<{
       Parameters: [Address, Hex, BlockTag];
       ReturnType: Hex;
-    }>({ method: "eth_getStorageAt", params: [userOp.sender, ERC1967_IMPLENENTATION_SLOT, 'latest'] });
-    console.log("implementation", implementation);
+    }>({
+      method: "eth_getStorageAt",
+      params: [userOp.sender, ERC1967_IMPLENENTATION_SLOT, "latest"],
+    });
     const implementationAddress = decodeAbiParameters(
       [{ type: "address" }],
       implementation,
     )[0];
     if (implementationAddress != coinbaseSmartWalletV1Implementation)
       return false;
-    console.log(0.4);
 
+    // check that userOp.callData is making a call we want to sponsor
     const calldata = decodeFunctionData({
       abi: coinbaseSmartWalletABI,
       data: userOp.callData,
     });
-    console.log(calldata.args);
 
     // keys.coinbase.com always uses executeBatch
-    console.log(1);
     if (calldata.functionName !== "executeBatch") return false;
-    console.log(2);
     if (!calldata.args || calldata.args.length == 0) return false;
 
     const calls = calldata.args[0] as {
@@ -134,30 +135,27 @@ async function willSponsor({
       value: bigint;
       data: Hex;
     }[];
-    console.log(3);
+    // modify if want to allow batch calls to your contract
     if (calls.length > 2) return false;
 
-    console.log(4);
     let callToCheckIndex = 0;
-    if (calls.length == 2) {
-      // if there are two calls, the first should be Magic Spend
+    if (calls.length > 1) {
+      // if there is more than one call, check if the first is a magic spend call
       if (calls[0].target.toLowerCase() !== MAGIC_SPEND_ADDRESS.toLowerCase())
         return false;
       callToCheckIndex = 1;
     }
-    console.log(5);
-    console.log(calls[callToCheckIndex]);
+
     if (
       calls[callToCheckIndex].target.toLowerCase() !==
       myNFTAddress.toLowerCase()
     )
       return false;
-    console.log(6);
+
     const innerCalldata = decodeFunctionData({
       abi: myNFTABI,
       data: calls[callToCheckIndex].data,
     });
-    console.log(7);
     if (innerCalldata.functionName !== "safeMint") return false;
 
     return true;
