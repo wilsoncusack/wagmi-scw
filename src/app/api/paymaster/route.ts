@@ -38,7 +38,7 @@ const coinbaseSmartWalletABI = [
 
 const paymasterService = process.env.PAYMASTER_SERVICE_URL!;
 
-export const paymasterClient = createClient({
+const paymasterClient = createClient({
   chain: baseSepolia,
   transport: http(paymasterService),
 }).extend(paymasterActionsEip7677({ entryPoint: ENTRYPOINT_ADDRESS_V06 }));
