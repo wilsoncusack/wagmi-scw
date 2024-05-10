@@ -44,7 +44,7 @@ export function TransactWithPaymaster() {
               ],
               capabilities: {
                 paymasterService: {
-                  url: `${document.location.origin}/paymaster"`,
+                  url: `${document.location.origin}/api/paymaster"`,
                 },
               },
             });
