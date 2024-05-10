@@ -1,20 +1,9 @@
-import { useAccount, useChainId } from "wagmi";
+import { useAccount } from "wagmi";
 import { useCapabilities, useWriteContracts } from "wagmi/experimental";
 import { useMemo, useState } from "react";
 import { CallStatus } from "./CallStatus";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 
-const abi = [
-  {
-    stateMutability: "nonpayable",
-    type: "function",
-    inputs: [{ name: "to", type: "address" }],
-    name: "safeMint",
-    outputs: [],
-  },
-] as const;
-
-// example batch transaction, making two mint NFT calls
 export function TransactWithPaymaster() {
   const account = useAccount();
   const [id, setId] = useState<string | undefined>(undefined);
