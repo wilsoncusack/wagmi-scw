@@ -1,5 +1,5 @@
 import { useAccount } from "wagmi";
-import { useWriteContracts } from "wagmi/experimental";
+import { useCallsStatus, useWriteContracts } from "wagmi/experimental";
 import { useState } from "react";
 import { CallStatus } from "./CallStatus";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
@@ -7,9 +7,20 @@ import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 // example batch transaction, making two mint NFT calls
 export function Transact() {
   const account = useAccount();
-  const [id, setId] = useState<string | undefined>(undefined);
-  const { writeContracts } = useWriteContracts({
-    mutation: { onSuccess: (id) => setId(id) },
+  const [is_busy, set_busy] = useState(false);
+  const {
+    data: bundle_id,
+    isPending,
+    writeContracts,
+  } = useWriteContracts({
+    mutation: { onSuccess() { set_busy(true) }},
+  });
+  const { data: calls_status } = useCallsStatus({
+    id: bundle_id as string,
+    query: {
+      enabled: !!bundle_id,
+      refetchInterval: (data) => (data.state.data?.status === "CONFIRMED" ? false : 2000),
+    },
   });
 
   return (
@@ -17,6 +28,7 @@ export function Transact() {
       <h2>Transact</h2>
       <div>
         <button
+          disabled={isPending || calls_status?.status === "PENDING"}
           onClick={() => {
             writeContracts({
               contracts: [
@@ -38,7 +50,7 @@ export function Transact() {
         >
           Mint
         </button>
-        {id && <CallStatus id={id} />}
+        {bundle_id && <CallStatus id={bundle_id} />}
       </div>
     </div>
   );
