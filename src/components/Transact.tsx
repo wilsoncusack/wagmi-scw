@@ -13,15 +13,36 @@ export function Transact() {
     isPending,
     writeContracts,
   } = useWriteContracts({
-    mutation: { onSuccess() { set_busy(true) }},
+    mutation: {
+      onSuccess() {
+        set_busy(true);
+      },
+    },
   });
   const { data: calls_status } = useCallsStatus({
     id: bundle_id as string,
     query: {
       enabled: !!bundle_id,
-      refetchInterval: (data) => (data.state.data?.status === "CONFIRMED" ? false : 2000),
+      refetchInterval: (data) =>
+        data.state.data?.status === "CONFIRMED" ? false : 2000,
     },
   });
+  const payload = {
+    contracts: [
+      {
+        address: myNFTAddress,
+        abi: myNFTABI,
+        functionName: "safeMint",
+        args: [account.address],
+      },
+      {
+        address: myNFTAddress,
+        abi: myNFTABI,
+        functionName: "safeMint",
+        args: [account.address],
+      },
+    ],
+  };
 
   return (
     <div>
@@ -30,22 +51,7 @@ export function Transact() {
         <button
           disabled={isPending || calls_status?.status === "PENDING"}
           onClick={() => {
-            writeContracts({
-              contracts: [
-                {
-                  address: myNFTAddress,
-                  abi: myNFTABI,
-                  functionName: "safeMint",
-                  args: [account.address],
-                },
-                {
-                  address: myNFTAddress,
-                  abi: myNFTABI,
-                  functionName: "safeMint",
-                  args: [account.address],
-                },
-              ],
-            });
+            writeContracts(payload as any);
           }}
         >
           Mint
