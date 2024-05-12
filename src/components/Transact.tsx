@@ -44,15 +44,18 @@ export function Transact() {
     ],
   };
 
+  const mint = () => {
+    set_busy(true)
+    writeContracts(payload as any);
+  }
+
   return (
     <div>
       <h2>Transact</h2>
       <div>
         <button
           disabled={isPending || calls_status?.status === "PENDING"}
-          onClick={() => {
-            writeContracts(payload as any);
-          }}
+          onClick={mint}
         >
           Mint
         </button>
