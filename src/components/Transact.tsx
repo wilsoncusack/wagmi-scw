@@ -11,7 +11,7 @@ export function Transact() {
   const {
     data: bundle_id,
     isPending,
-    writeContracts,
+    writeContractsAsync
   } = useWriteContracts({
     mutation: {
       onSuccess() {
@@ -46,7 +46,7 @@ export function Transact() {
 
   const mint = () => {
     set_busy(true)
-    writeContracts(payload as any);
+    writeContractsAsync(payload as any);
   }
 
   return (
