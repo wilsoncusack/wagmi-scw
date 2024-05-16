@@ -22,7 +22,7 @@ export function TransactWithPaymaster() {
     ) {
       return {
         paymasterService: {
-          url: `${document.location.origin}/api/paymaster`,
+          url: process.env.PAYMASTER_PROXY_SERVER_URL || `${document.location.origin}/api/paymaster`,
         },
       };
     }
