@@ -9,7 +9,7 @@ export const config = createConfig({
   connectors: [
     coinbaseWallet({
       appName: "Wagmi Smart Wallet",
-      appChainIds: [baseSepolia.id],
+      preference: "smartWalletOnly",
     }),
   ],
   ssr: true,
