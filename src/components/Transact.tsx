@@ -1,5 +1,5 @@
 import { useAccount } from "wagmi";
-import { useWriteContracts } from "wagmi/experimental";
+import { useSendCalls, useWriteContracts } from "wagmi/experimental";
 import { useState } from "react";
 import { CallStatus } from "./CallStatus";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
@@ -8,7 +8,7 @@ import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 export function Transact() {
   const account = useAccount();
   const [id, setId] = useState<string | undefined>(undefined);
-  const { writeContracts } = useWriteContracts({
+  const { sendCalls } = useSendCalls({
     mutation: { onSuccess: (id) => setId(id) },
   });
 
@@ -19,19 +19,15 @@ export function Transact() {
         <button
           id="mint-button"
           onClick={() => {
-            writeContracts({
-              contracts: [
+            sendCalls({
+              calls: [
                 {
-                  address: myNFTAddress,
-                  abi: myNFTABI,
-                  functionName: "safeMint",
-                  args: [account.address],
+                  to: account.address!,
+                  value: BigInt(1)
                 },
                 {
-                  address: myNFTAddress,
-                  abi: myNFTABI,
-                  functionName: "safeMint",
-                  args: [account.address],
+                  to: account.address!,
+                  value: BigInt(1)
                 },
               ],
             });
