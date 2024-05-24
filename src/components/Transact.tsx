@@ -17,6 +17,7 @@ export function Transact() {
       <h2>Transact</h2>
       <div>
         <button
+          id="mint-button"
           onClick={() => {
             writeContracts({
               contracts: [
