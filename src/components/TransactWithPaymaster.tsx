@@ -1,16 +1,11 @@
 import { useAccount } from "wagmi";
-import { useCapabilities, useWriteContracts } from "wagmi/experimental";
-import { useMemo, useState } from "react";
-import { CallStatus } from "./CallStatus";
+import { useCapabilities } from "wagmi/experimental";
+import { useMemo } from "react";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 import { TransactButton } from "./TransactButton";
 
 export function TransactWithPaymaster() {
   const account = useAccount();
-  const [id, setId] = useState<string | undefined>(undefined);
-  const { writeContracts } = useWriteContracts({
-    mutation: { onSuccess: (id) => setId(id) },
-  });
   const { data: availableCapabilities } = useCapabilities({
     account: account.address,
   });
@@ -46,7 +41,6 @@ export function TransactWithPaymaster() {
             },
           ]}
           capabilities={capabilities}
-          mutation={{ onSuccess: (id: string) => setId(id) }}
         />
       </div>
     </div>

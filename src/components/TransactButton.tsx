@@ -38,7 +38,6 @@ export function TransactButton<
         mutation.onError(error);
       },
       onSuccess: (id) => {
-        console.log("id", id);
         setId(id);
         mutation.onSuccess(id);
       },
