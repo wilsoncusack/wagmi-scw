@@ -1,4 +1,4 @@
-import { useCallsStatus } from "wagmi/experimental";
+import { useCallsStatus, useShowCallsStatus } from "wagmi/experimental";
 
 export function CallStatus({ id }: { id: string }) {
   const { data: callsStatus } = useCallsStatus({
@@ -8,6 +8,12 @@ export function CallStatus({ id }: { id: string }) {
         data.state.data?.status === "CONFIRMED" ? false : 1000,
     },
   });
+  const { showCallsStatus } = useShowCallsStatus();
 
-  return <div> Status: {callsStatus?.status || "loading"}</div>;
+  return (
+    <div>
+      <p>Status: {callsStatus?.status || "loading"}</p>
+      <button onClick={() => showCallsStatus({ id })}>View in Wallet</button>
+    </div>
+  );
 }
