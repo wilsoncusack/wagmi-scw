@@ -6,7 +6,12 @@ export async function POST(r: Request) {
   const method = req.method;
   const [userOp, entrypoint, chainId] = req.params;
 
-  if (!willSponsor({ chainId: parseInt(chainId), entrypoint, userOp })) {
+  const sponsorable = await willSponsor({
+    chainId: parseInt(chainId),
+    entrypoint,
+    userOp,
+  });
+  if (!sponsorable) {
     return Response.json({ error: "Not a sponsorable operation" });
   }
 
