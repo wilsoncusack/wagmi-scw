@@ -1,52 +1,40 @@
-import { ENTRYPOINT_ADDRESS_V06, UserOperation } from "permissionless";
-import {
-  Address,
-  BlockTag,
-  Hex,
-  decodeAbiParameters,
-  decodeFunctionData,
-} from "viem";
+import { UserOperation } from "permissionless";
+import { Address, Hex, decodeFunctionData } from "viem";
 import { baseSepolia } from "viem/chains";
 import { client } from "./config";
-import {
-  coinbaseSmartWalletABI,
-  coinbaseSmartWalletProxyBytecode,
-  coinbaseSmartWalletV1Implementation,
-  erc1967ProxyImplementationSlot,
-  magicSpendAddress,
-} from "./constants";
+import { coinbaseSmartWalletABI, magicSpendAddress } from "./constants";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
+import { isValidAAEntrypoint } from "@coinbase/onchainkit/wallet";
+import { isWalletASmartWallet } from "@coinbase/onchainkit/wallet";
+import type { IsValidAAEntrypointOptions } from "@coinbase/onchainkit/wallet";
+import type { IsWalletASmartWalletOptions } from "@coinbase/onchainkit/wallet";
 
 export async function willSponsor({
   chainId,
   entrypoint,
   userOp,
-}: { chainId: number; entrypoint: string; userOp: UserOperation<"v0.6"> }) {
+}: {
+  chainId: number;
+  entrypoint: string;
+  userOp: UserOperation<"v0.6">;
+}) {
   // check chain id
   if (chainId !== baseSepolia.id) return false;
+
   // check entrypoint
   // not strictly needed given below check on implementation address, but leaving as example
-  if (entrypoint.toLowerCase() !== ENTRYPOINT_ADDRESS_V06.toLowerCase())
+  if (!isValidAAEntrypoint({ entrypoint } as IsValidAAEntrypointOptions))
     return false;
 
   try {
     // check the userOp.sender is a proxy with the expected bytecode
-    const code = await client.getBytecode({ address: userOp.sender });
-    if (code != coinbaseSmartWalletProxyBytecode) return false;
-
     // check that userOp.sender proxies to expected implementation
-    const implementation = await client.request<{
-      Parameters: [Address, Hex, BlockTag];
-      ReturnType: Hex;
-    }>({
-      method: "eth_getStorageAt",
-      params: [userOp.sender, erc1967ProxyImplementationSlot, "latest"],
-    });
-    const implementationAddress = decodeAbiParameters(
-      [{ type: "address" }],
-      implementation,
-    )[0];
-    if (implementationAddress != coinbaseSmartWalletV1Implementation)
+    if (
+      !(await isWalletASmartWallet({
+        client,
+        userOp,
+      } as IsWalletASmartWalletOptions))
+    )
       return false;
 
     // check that userOp.callData is making a call we want to sponsor
@@ -64,6 +52,7 @@ export async function willSponsor({
       value: bigint;
       data: Hex;
     }[];
+
     // modify if want to allow batch calls to your contract
     if (calls.length > 2) return false;
 
@@ -85,6 +74,7 @@ export async function willSponsor({
       abi: myNFTABI,
       data: calls[callToCheckIndex].data,
     });
+
     if (innerCalldata.functionName !== "safeMint") return false;
 
     return true;
