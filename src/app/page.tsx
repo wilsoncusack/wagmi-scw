@@ -7,6 +7,7 @@ import { SignMessage } from "@/components/SignMessage";
 import { TypedSign } from "@/components/TypedSign";
 import { Permit2 } from "@/components/Permit2";
 import { TransactWithPaymaster } from "@/components/TransactWithPaymaster";
+import { ConnectAndSIWE } from "@/components/ConnectAndSIWE";
 
 const abi = [
   {
@@ -46,16 +47,19 @@ function App() {
 
       <div>
         <h2>Connect</h2>
-        {connectors.map((connector) => (
-          <button
-            id={connector.id}
-            key={connector.uid}
-            onClick={() => connect({ connector })}
-            type="button"
-          >
-            {connector.name}
-          </button>
-        ))}
+        <>
+          {connectors.map((connector) => (
+            <button
+              id={connector.id}
+              key={connector.uid}
+              onClick={() => connect({ connector })}
+              type="button"
+            >
+              {connector.name}
+            </button>
+          ))}
+          <ConnectAndSIWE />
+        </>
         <div>{status}</div>
         <div>{error?.message}</div>
       </div>

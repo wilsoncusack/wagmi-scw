@@ -25,7 +25,7 @@ export function SignMessage() {
   const [valid, setValid] = useState<boolean | undefined>(undefined);
 
   const checkValid = useCallback(async () => {
-    if (!signature || !account.address) return;
+    if (!signature || !account.address || !client) return;
 
     client
       .verifyMessage({
