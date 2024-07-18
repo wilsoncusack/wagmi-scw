@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Hex } from "viem";
 import { useAccount, useConnect, usePublicClient, useSignMessage } from "wagmi";
 import { SiweMessage } from "siwe";
 import { cbWalletConnector } from "@/wagmi";
 
 export function ConnectAndSIWE() {
-  const { connect, status, error } = useConnect({
+  const { connect } = useConnect({
     mutation: {
       onSuccess: (data) => {
         const address = data.accounts[0];
@@ -31,17 +31,6 @@ export function ConnectAndSIWE() {
     mutation: { onSuccess: (sig) => setSignature(sig) },
   });
   const [message, setMessage] = useState<SiweMessage | undefined>(undefined);
-  // const message = useMemo(() => {
-  //   return new SiweMessage({
-  //     domain: document.location.host,
-  //     address: account.address,
-  //     chainId: account.chainId,
-  //     uri: document.location.origin,
-  //     version: "1",
-  //     statement: "Smart Wallet SIWE Example",
-  //     nonce: "12345678",
-  //   });
-  // }, []);
 
   const [valid, setValid] = useState<boolean | undefined>(undefined);
 
