@@ -14,7 +14,7 @@ export const config = createConfig({
   connectors: [cbWalletConnector],
   ssr: true,
   transports: {
-    [baseSepolia.id]: http(),
+    [base.id]: http(),
   },
 });
 
