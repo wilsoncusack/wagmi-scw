@@ -6,6 +6,7 @@ import { TransactButton } from "./TransactButton";
 
 export function TransactWithPaymaster() {
   const account = useAccount();
+  const { sendCalls } = useSendCalls();
   const { data: availableCapabilities } = useCapabilities({
     account: account.address,
   });
@@ -22,8 +23,6 @@ export function TransactWithPaymaster() {
       };
     }
   }, [availableCapabilities, account.chainId]);
-
-  const { sendCalls } = useSendCalls();
 
   return (
     <div>
@@ -45,7 +44,6 @@ export function TransactWithPaymaster() {
         >
           Send calls
         </button>
-        '
       </div>
     </div>
   );

@@ -23,19 +23,19 @@ export async function willSponsor({
   userOp,
 }: { chainId: number; entrypoint: string; userOp: UserOperation<"v0.6"> }) {
   // check chain id
-  console.log(1)
+  console.log(1);
   if (chainId !== base.id) return false;
-  console.log(2)
+  console.log(2);
   // check entrypoint
   // not strictly needed given below check on implementation address, but leaving as example
   if (entrypoint.toLowerCase() !== ENTRYPOINT_ADDRESS_V06.toLowerCase())
     return false;
-  console.log(3)
+  console.log(3);
   try {
     // check the userOp.sender is a proxy with the expected bytecode
     const code = await client.getBytecode({ address: userOp.sender });
     if (code != coinbaseSmartWalletProxyBytecode) return false;
-    console.log(4)
+    console.log(4);
     // check that userOp.sender proxies to expected implementation
     const implementation = await client.request<{
       Parameters: [Address, Hex, BlockTag];
@@ -50,7 +50,7 @@ export async function willSponsor({
     )[0];
     if (implementationAddress != coinbaseSmartWalletV1Implementation)
       return false;
-    console.log(5)
+    console.log(5);
 
     // check that userOp.callData is making a call we want to sponsor
     const calldata = decodeFunctionData({
