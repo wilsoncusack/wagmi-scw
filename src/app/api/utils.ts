@@ -58,41 +58,39 @@ export async function willSponsor({
       data: userOp.callData,
     });
 
-    return true;
-
     // keys.coinbase.com always uses executeBatch
-    if (calldata.functionName !== "executeBatch") return false;
-    console.log(6)
-    // if (!calldata.args || calldata.args.length == 0) return false;
-    console.log(7)
+    // if (calldata.functionName !== "executeBatch") return false;
+    // console.log(6)
+    // // if (!calldata.args || calldata.args.length == 0) return false;
+    // console.log(7)
 
-    const calls = calldata.args[0] as {
-      target: Address;
-      value: bigint;
-      data: Hex;
-    }[];
-    // modify if want to allow batch calls to your contract
-    if (calls.length > 2) return false;
+    // const calls = calldata.args[0] as {
+    //   target: Address;
+    //   value: bigint;
+    //   data: Hex;
+    // }[];
+    // // modify if want to allow batch calls to your contract
+    // if (calls.length > 2) return false;
 
-    let callToCheckIndex = 0;
-    if (calls.length > 1) {
-      // if there is more than one call, check if the first is a magic spend call
-      if (calls[0].target.toLowerCase() !== magicSpendAddress.toLowerCase())
-        return false;
-      callToCheckIndex = 1;
-    }
+    // let callToCheckIndex = 0;
+    // if (calls.length > 1) {
+    //   // if there is more than one call, check if the first is a magic spend call
+    //   if (calls[0].target.toLowerCase() !== magicSpendAddress.toLowerCase())
+    //     return false;
+    //   callToCheckIndex = 1;
+    // }
 
-    if (
-      calls[callToCheckIndex].target.toLowerCase() !==
-      myNFTAddress.toLowerCase()
-    )
-      return false;
+    // if (
+    //   calls[callToCheckIndex].target.toLowerCase() !==
+    //   myNFTAddress.toLowerCase()
+    // )
+    //   return false;
 
-    const innerCalldata = decodeFunctionData({
-      abi: myNFTABI,
-      data: calls[callToCheckIndex].data,
-    });
-    if (innerCalldata.functionName !== "safeMint") return false;
+    // const innerCalldata = decodeFunctionData({
+    //   abi: myNFTABI,
+    //   data: calls[callToCheckIndex].data,
+    // });
+    // if (innerCalldata.functionName !== "safeMint") return false;
 
     return true;
   } catch (e) {
