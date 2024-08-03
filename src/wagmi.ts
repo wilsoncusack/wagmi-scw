@@ -1,5 +1,5 @@
 import { http, createConfig } from "wagmi";
-import { baseSepolia } from "wagmi/chains";
+import { base, baseSepolia } from "wagmi/chains";
 import { coinbaseWallet } from "wagmi/connectors";
 
 export const cbWalletConnector = coinbaseWallet({
@@ -8,7 +8,7 @@ export const cbWalletConnector = coinbaseWallet({
 });
 
 export const config = createConfig({
-  chains: [baseSepolia],
+  chains: [base],
   // turn off injected provider discovery
   multiInjectedProviderDiscovery: false,
   connectors: [cbWalletConnector],
