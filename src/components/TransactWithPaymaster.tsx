@@ -1,21 +1,19 @@
 import { useAccount } from "wagmi";
-import { useCapabilities } from "wagmi/experimental";
+import { useCapabilities, useSendCalls } from "wagmi/experimental";
 import { useMemo } from "react";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
 import { TransactButton } from "./TransactButton";
 
 export function TransactWithPaymaster() {
   const account = useAccount();
+  const { sendCalls } = useSendCalls();
   const { data: availableCapabilities } = useCapabilities({
     account: account.address,
   });
   const capabilities = useMemo(() => {
     if (!availableCapabilities || !account.chainId) return;
     const capabilitiesForChain = availableCapabilities[account.chainId];
-    if (
-      capabilitiesForChain["paymasterService"] &&
-      capabilitiesForChain["paymasterService"].supported
-    ) {
+    if (capabilitiesForChain.paymasterService?.supported) {
       return {
         paymasterService: {
           url:
@@ -30,18 +28,22 @@ export function TransactWithPaymaster() {
     <div>
       <h2>Transact With Paymaster</h2>
       <div>
-        <TransactButton
-          text="Mint"
-          contracts={[
-            {
-              address: myNFTAddress,
-              abi: myNFTABI,
-              functionName: "safeMint",
-              args: [account.address],
-            },
-          ]}
-          capabilities={capabilities}
-        />
+        <button
+          type="button"
+          onClick={() =>
+            sendCalls({
+              calls: [
+                {
+                  to: "0xfd896Bf5Eba7E1B9843B91ef6182DE16B547273B",
+                  value: BigInt(1),
+                },
+              ],
+              capabilities,
+            })
+          }
+        >
+          Send calls
+        </button>
       </div>
     </div>
   );
