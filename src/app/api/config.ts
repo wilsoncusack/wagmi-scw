@@ -8,7 +8,7 @@ export const client = createPublicClient({
   transport: http(),
 });
 
-const paymasterService = process.env.PAYMASTER_SERVICE_URL!;
+const paymasterService = 'https://api.developer.coinbase.com/rpc/v1/base-sepolia/<your token here>'; // not using this
 
 export const paymasterClient = createClient({
   chain: baseSepolia,

@@ -19,8 +19,7 @@ export function TransactWithPaymaster() {
       return {
         paymasterService: {
           url:
-            process.env.PAYMASTER_PROXY_SERVER_URL ||
-            `${document.location.origin}/api/paymaster`,
+            `https://api.developer.coinbase.com/rpc/v1/base-sepolia/<your token here>`, // todo add your api token here
         },
       };
     }
