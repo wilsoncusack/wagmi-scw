@@ -45,13 +45,12 @@ export function TypedSign() {
   const checkValid = useCallback(async () => {
     if (!signature || !account.address) return;
 
-    client
-      .verifyTypedData({
-        address: account.address,
-        types,
-        domain,
-        primaryType: "Mail",
-        message,
+    client?.verifyTypedData({
+      address: account.address,
+      types,
+      domain,
+      primaryType: "Mail",
+      message,
         signature,
       })
       .then((v) => setValid(v));
