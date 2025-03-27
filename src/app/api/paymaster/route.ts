@@ -1,4 +1,4 @@
-import { paymasterClient } from "../config";
+import { paymasterClient, bundlerClient } from "../config";
 import { willSponsor } from "../utils";
 
 export async function POST(r: Request) {
@@ -17,12 +17,20 @@ export async function POST(r: Request) {
 
   if (method === "pm_getPaymasterStubData") {
     const result = await paymasterClient.getPaymasterStubData({
-      userOperation: userOp,
+      callData: userOp.callData,
+      chainId: chainId,
+      entryPointAddress: entrypoint,
+      nonce: userOp.nonce,
+      sender: userOp.sender,
     });
     return Response.json({ result });
   } else if (method === "pm_getPaymasterData") {
     const result = await paymasterClient.getPaymasterData({
-      userOperation: userOp,
+      callData: userOp.callData,
+      chainId: chainId,
+      entryPointAddress: entrypoint,
+      nonce: userOp.nonce,
+      sender: userOp.sender,
     });
     return Response.json({ result });
   }

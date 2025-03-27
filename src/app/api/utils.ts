@@ -1,4 +1,5 @@
-import { ENTRYPOINT_ADDRESS_V06, UserOperation } from "permissionless";
+import { UserOperation } from "viem/account-abstraction";
+import { entryPoint06Address } from "viem/account-abstraction";
 import {
   Address,
   BlockTag,
@@ -21,12 +22,12 @@ export async function willSponsor({
   chainId,
   entrypoint,
   userOp,
-}: { chainId: number; entrypoint: string; userOp: UserOperation<"v0.6"> }) {
+}: { chainId: number; entrypoint: string; userOp: UserOperation<'0.6'> }) {
   // check chain id
   if (chainId !== baseSepolia.id) return false;
   // check entrypoint
   // not strictly needed given below check on implementation address, but leaving as example
-  if (entrypoint.toLowerCase() !== ENTRYPOINT_ADDRESS_V06.toLowerCase())
+  if (entrypoint.toLowerCase() !== entryPoint06Address.toLowerCase())
     return false;
 
   try {

@@ -1,4 +1,4 @@
-import { useAccount } from "wagmi";
+import { http, useAccount } from "wagmi";
 import { useCapabilities } from "wagmi/experimental";
 import { useMemo } from "react";
 import { myNFTABI, myNFTAddress } from "@/ABIs/myNFT";
@@ -16,11 +16,10 @@ export function TransactWithPaymaster() {
       capabilitiesForChain["paymasterService"] &&
       capabilitiesForChain["paymasterService"].supported
     ) {
+      const paymasterServiceUrl = process.env.NEXT_PUBLIC_PAYMASTER_PROXY_SERVER_URL
       return {
         paymasterService: {
-          url:
-            process.env.PAYMASTER_PROXY_SERVER_URL ||
-            `${document.location.origin}/api/paymaster`,
+          url: paymasterServiceUrl,
         },
       };
     }

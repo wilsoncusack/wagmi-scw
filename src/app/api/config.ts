@@ -1,7 +1,6 @@
 import { createClient, createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { ENTRYPOINT_ADDRESS_V06 } from "permissionless";
-import { paymasterActionsEip7677 } from "permissionless/experimental";
+import { entryPoint06Address, createPaymasterClient, createBundlerClient } from "viem/account-abstraction";
 
 export const client = createPublicClient({
   chain: baseSepolia,
@@ -10,7 +9,12 @@ export const client = createPublicClient({
 
 const paymasterService = process.env.PAYMASTER_SERVICE_URL!;
 
-export const paymasterClient = createClient({
-  chain: baseSepolia,
+export const paymasterClient = createPaymasterClient({
   transport: http(paymasterService),
-}).extend(paymasterActionsEip7677({ entryPoint: ENTRYPOINT_ADDRESS_V06 }));
+});
+
+export const bundlerClient = createBundlerClient({
+  chain: baseSepolia,
+  paymaster: paymasterClient, 
+  transport: http(paymasterService),
+})
